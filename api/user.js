@@ -6,7 +6,7 @@ const otpData = require("../models/otpData");
 const moment = require("moment/moment");
 const multer = require("multer");
 const doctorsData = require("../models/doctorsData");
-const accountSid = "pAC3256e1684f9217c860c9bdf71ef3f30b";
+const accountSid = "AC3256e1684f9217c860c9bdf71ef3f30b";
 const authToken = "aca692d994fbb64526b3aa2fc500afe3";
 const client = require("twilio")(accountSid, authToken);
 
@@ -93,19 +93,22 @@ router.patch("/:id", async (req, res) => {
 
 router.post("/send", async (req, res) => {
   const code = Math.floor(1000 + Math.random() * 9000);
+console.log("KKKKKKKKKKKKKKKKKKKKKKK",code)
   const userOtp = new otpData({
     number: req.body.number,
     otp: code,
     time: new moment(),
   });
+  console.log(userOtp,"KKKK")
   try {
-    const a1 = await userOtp.save();
-    await client.messages.create({
+     await userOtp.save();
+     client.messages.create({
       body: ` hi rahul your code is ${code}`,
       from: "+15077057426",
-      to: "+917041200380",
+      to: `+${req.body.number}`,
     });
-    res.json("OTP SEND");
+    console.log(a1,"LLLLLL")
+    res.json(a1);
   } catch (err) {
     res.send(err);
   }
