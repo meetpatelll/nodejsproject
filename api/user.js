@@ -24,7 +24,7 @@ var storage = multer.diskStorage({
 });
 
 
-var upload = multer({ storage: storage }).single("file");
+var upload = multer({ storage: storage }).single("profileImage");
 
 router.get("/getDoctorList", async (req, res) => {
   try {
