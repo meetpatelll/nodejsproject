@@ -6,7 +6,7 @@ const dotenv = require('dotenv')
 dotenv.config()
 const app = express()
 const bodyParser =  require('body-parser')
-const port =process.env.PORT || 5000
+const port =process.env.PORT || 5050
 
 mongoose.connect(url, {useNewUrlParser:true,dbName:"Doctor"})
 const con = mongoose.connection
