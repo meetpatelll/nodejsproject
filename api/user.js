@@ -6,8 +6,9 @@ const otpData = require("../models/otpData");
 const moment = require("moment/moment");
 const multer = require("multer");
 const doctorsData = require("../models/doctorsData");
+
 const accountSid = "AC3256e1684f9217c860c9bdf71ef3f30b";
-const authToken = "aca692d994fbb64526b3aa2fc500afe3";
+const authToken = "55673d5f693a61a5eea7008d851e37d3";
 const client = require("twilio")(accountSid, authToken);
 
 var storage = multer.diskStorage({
@@ -93,6 +94,9 @@ router.patch("/:id", async (req, res) => {
 
 router.post("/send", async (req, res) => {
   const code = Math.floor(1000 + Math.random() * 9000);
+   const data= await otpData.findOneAndRemove({ number: req.body.number })
+
+  
 console.log("KKKKKKKKKKKKKKKKKKKKKKK",code)
   const userOtp = new otpData({
     number: req.body.number,
@@ -101,14 +105,14 @@ console.log("KKKKKKKKKKKKKKKKKKKKKKK",code)
   });
   console.log(userOtp,"KKKK")
   try {
-     await userOtp.save();
-     client.messages.create({
+     let a1=await userOtp.save();
+    let  data=await client.messages.create({
       body: ` hi rahul your code is ${code}`,
       from: "+15077057426",
       to: `+${req.body.number}`,
     });
-    console.log(a1,"LLLLLL")
-    res.json(a1);
+    console.log(a1,"LLLLLL",data)
+    res.json(data);
   } catch (err) {
     res.send(err);
   }
