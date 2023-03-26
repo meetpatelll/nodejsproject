@@ -59,22 +59,48 @@ router.get("/", (req, res) => {
   res.send("jadkbhsbvhkb");
 });
 
-router.post("/createUser", upload, async (req, res) => {
-  console.log(req.file, "FFFFFFFFFFFFFile");
-  const user = new Users({
-    name: req.body.name,
-    birthdate: req.body.birthdate,
-    email: req.body.email,
-    city: req.body.city,
-    gender: req.body.gender,
-    profileImage: req.file.path,
-  });
-  try {
-    const a1 = await user.save();
-    res.json(a1);
-  } catch (err) {
-    res.send(err);
-  }
+router.post("/createUser",upload, async (req, res) => {
+
+let userInfo=await Users.find({email:req.body.email})
+if(userInfo.length<=0){
+    if(req.file){
+        console.log("KKKKKK2222222222222222333333333333333333333")
+    
+        const user = new Users({
+            name: req.body.name,
+            birthdate: req.body.birthdate,
+            email: req.body.email,
+            city: req.body.city,
+            gender: req.body.gender,
+            profileImage: req.file.path,
+          });
+          try {
+            const a1 = await user.save();
+            res.json(a1);
+          } catch (err) {
+            res.send(err);
+          }
+    }else{
+        console.log("KKKKKK2222222222222222")
+        const user = new Users({
+            name: req.body.name,
+            birthdate: req.body.birthdate,
+            email: req.body.email,
+            city: req.body.city,
+            gender: req.body.gender,
+          });
+          try {
+            const a1 = await user.save();
+            res.json(a1);
+          } catch (err) {
+            res.send(err);
+          }
+    }
+}else{
+    res.send("Email already register")
+}
+
+ 
 });
 
 router.patch("/:id", async (req, res) => {
