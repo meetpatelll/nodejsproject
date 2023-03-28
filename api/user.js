@@ -13,7 +13,6 @@ const client = require("twilio")(accountSid, authToken);
 
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    console.log("zdfnsinisfni");
     cb(null, "./public/uploads");
   },
   filename: function (req, file, cb) {
@@ -30,7 +29,6 @@ var upload = multer({ storage: storage }).single("profileImage");
 router.get("/getDoctorList", async (req, res) => {
   try {
     const user = await doctorsData.find();
-    console.log(doctorsData, "rarstrdtfyguh", user);
     res.send(user);
   } catch (err) {
     res.send("Error " + err);
@@ -46,9 +44,11 @@ router.get("/getUserList", async (req, res) => {
   }
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/getUserByMobile", async (req, res) => {
+    console.log(req.query,"jdbuwhdousahohoewu")
   try {
-    const user = await Users.findById(req.params.id);
+    const user = await Users.find({number:req.body.number});
+    console.log(user,"KKKKKKKKKKKKKKKKK")
     res.json(user);
   } catch (err) {
     res.send("Error " + err);
@@ -60,12 +60,10 @@ router.get("/", (req, res) => {
 });
 
 router.post("/createUser",upload, async (req, res) => {
-
+console.log(req.body,"pasjidoiinfofvuojvnubdbubd")
 let userInfo=await Users.find({email:req.body.email})
 if(userInfo.length<=0){
-    if(req.file){
-        console.log("KKKKKK2222222222222222333333333333333333333")
-    
+    if(req.file){    
         const user = new Users({
             name: req.body.name,
             birthdate: req.body.birthdate,
@@ -73,6 +71,7 @@ if(userInfo.length<=0){
             city: req.body.city,
             gender: req.body.gender,
             profileImage: req.file.path,
+            number:req.body.number
           });
           try {
             const a1 = await user.save();
@@ -81,14 +80,15 @@ if(userInfo.length<=0){
             res.send(err);
           }
     }else{
-        console.log("KKKKKK2222222222222222")
         const user = new Users({
             name: req.body.name,
             birthdate: req.body.birthdate,
             email: req.body.email,
             city: req.body.city,
             gender: req.body.gender,
+            number:req.body.number
           });
+        console.log(user,"KKKKKKK")
           try {
             const a1 = await user.save();
             res.json(a1);
@@ -97,13 +97,58 @@ if(userInfo.length<=0){
           }
     }
 }else{
-    res.send("Email already register")
+    res.json({
+        status:false,
+        message:"Email already register"
+    })
 }
 
  
 });
 
-router.patch("/:id", async (req, res) => {
+router.patch("/updateUser/:id",upload, async (req, res) => {
+
+    let userInfo=await Users.find({ _id: req.params.id })
+
+    if(userInfo.length<=0){
+        if(req.file){
+            console.log("KKKKKK2222222222222222333333333333333333333")
+        
+            const user = new Users({
+                name: req.body.name,
+                birthdate: req.body.birthdate,
+                email: req.body.email,
+                city: req.body.city,
+                gender: req.body.gender,
+                profileImage: req.file.path,
+              });
+              try {
+                const a1 = await user.save();
+                res.json(a1);
+              } catch (err) {
+                res.send(err);
+              }
+        }else{
+            const user = new Users({
+                name: req.body.name,
+                birthdate: req.body.birthdate,
+                email: req.body.email,
+                city: req.body.city,
+                gender: req.body.gender,
+              });
+              try {
+                const a1 = await user.save();
+                res.json(a1);
+              } catch (err) {
+                res.send(err);
+              }
+        }
+    }else{
+        res.json({
+            status:false,
+            message:"Email already register"
+        })
+    }
   try {
     const alien = await Users.findOneAndUpdate(
       { _id: req.params.id },
@@ -163,16 +208,24 @@ router.post("/resend", async (req, res) => {
 });
 
 router.post("/verifyOtp", async (req, res) => {
+    console.log("baskhcbsbdsjcbjo");
   try {
     const number = await otpData.find({ number: req.body.number });
+    console.log(number,"JJJJ")
     if (
       number[0].otp == req.body.otp &&
       moment().diff(moment(number[0]?.time), "minute") < 10
     ) {
       await otpData.remove({ number: number[0].number });
-      res.send("otp verify");
+      res.json({
+        status:true,
+        message:"OTP verify"
+      });
     } else {
-      res.send("invaild otp");
+      res.json({
+        status:true,
+        message:"invaild otp"
+      });
     }
   } catch (err) {
     res.send("Error " + err);
@@ -184,8 +237,9 @@ router.post("/createDoctor", async (req, res) => {
     name: req.body.name,
     Exp: req.body.Exp,
     prof: req.body.prof,
+    number:req.body.number,
+    colorCode:req.body.colorCode
   });
-  console.log(user, ">>>>>>");
   try {
     const a1 = await user.save();
     res.json(a1);

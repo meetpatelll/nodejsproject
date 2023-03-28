@@ -26,6 +26,10 @@ const userRegistrationSchema = new mongoose.Schema({
     profileImage:{
         type:String,
         required:false
+    },
+    number:{
+        type:String,
+        required:true
     }
 
 })

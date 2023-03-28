@@ -15,6 +15,14 @@ const doctorDataSchema = new mongoose.Schema({
         type:String,
         required: true
 
+    },
+    number:{
+        type:String,
+        required:false
+    },
+    colorCode:{
+        type:String,
+        required:false
     }
 
 })
