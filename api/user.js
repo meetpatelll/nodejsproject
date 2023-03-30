@@ -44,7 +44,7 @@ router.get("/getUserList", async (req, res) => {
   }
 });
 
-router.get("/getUserByMobile", async (req, res) => {
+router.post("/getUserByMobile", async (req, res) => {
     console.log(req.query,"jdbuwhdousahohoewu")
   try {
     const user = await Users.find({number:req.body.number});
