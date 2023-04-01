@@ -22,9 +22,10 @@ con.on('open', () => {
 //console.log(path.join(__dirname,"../public"),">>>>>>>>>>>>>");
 app.use(bodyParser.json({ limit: '50mb' }))
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }))
-app.use(express.static(path.join(__dirname,'./public')))
-app.use('/public', express.static('public'));
 
+
+app.use(express.static(__dirname + '/tmp'));
+app.use('/tmp', express.static('tmp'));
 
 app.use(express.json({ extended: false }));
 
