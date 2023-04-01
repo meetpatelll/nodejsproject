@@ -13,7 +13,7 @@ const client = require("twilio")(accountSid, authToken);
 
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "./public/uploads");
+    cb(null, "./tmp/uploads");
   },
   filename: function (req, file, cb) {
     console.log(file,"nbjfnjbvfjerjb")
