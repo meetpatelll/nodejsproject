@@ -8,7 +8,7 @@ const multer = require("multer");
 const doctorsData = require("../models/doctorsData");
 
 const accountSid = "AC247ceb11eeebf6b879ad820df6ed70ca";
-const authToken = "e577131dcfe76be9db4d6bfc6602cabc";
+const authToken = "bf78e45d392683d9fdc2631c1038aade";
 const client = require("twilio")(accountSid, authToken);
 
 var storage = multer.diskStorage({
@@ -16,7 +16,6 @@ var storage = multer.diskStorage({
     cb(null, "./tmp/uploads");
   },
   filename: function (req, file, cb) {
-    console.log(file,"nbjfnjbvfjerjb")
     cb(
       null,
       file.fieldname + "-" + Date.now() + path.extname(file.originalname)
@@ -46,23 +45,26 @@ router.get("/getUserList", async (req, res) => {
 });
 
 router.post("/getUserByMobile", async (req, res) => {
-    console.log(req.query,"jdbuwhdousahohoewu")
   try {
     const user = await Users.find({number:req.body.number});
-    console.log(user,"KKKKKKKKKKKKKKKKK")
-    res.json(user);
+    if(user.length>0){
+        res.json(user);
+    }else{
+res.json({
+    status:false,
+    message:"Can't find user with such mobile number"
+})
+    }
+    
   } catch (err) {
     res.send("Error " + err);
   }
 });
 
-router.get("/", (req, res) => {
-  res.send("jadkbhsbvhkb");
-});
+
 
 router.post("/createUser",upload, async (req, res) => {
-console.log(req.body,"pasjidoiinfofvuojvnubdbubd")
-let userInfo=await Users.find({email:req.body.email})
+let userInfo=await Users.find({ number:req.body.number})
 if(userInfo.length<=0){
     if(req.file){    
         const user = new Users({
@@ -89,7 +91,6 @@ if(userInfo.length<=0){
             gender: req.body.gender,
             number:req.body.number
           });
-        console.log(user,"KKKKKKK")
           try {
             const a1 = await user.save();
             res.json(a1);
@@ -100,66 +101,55 @@ if(userInfo.length<=0){
 }else{
     res.json({
         status:false,
-        message:"Email already register"
+        message:"Mobile already register"
     })
 }
 
  
 });
 
-router.patch("/updateUser/:id",upload, async (req, res) => {
+router.post("/updateUser",upload, async (req, res) => {
 
-    let userInfo=await Users.find({ _id: req.params.id })
+    let userInfo= await Users.find({number:req.body.number});
+    console.log(userInfo,"adbfisbdujsdbjsbjsfdbsjdlbsdjlbvf")
 
-    if(userInfo.length<=0){
+    if(!userInfo.length<=0){
         if(req.file){
-            console.log("KKKKKK2222222222222222333333333333333333333")
         
-            const user = new Users({
-                name: req.body.name,
-                birthdate: req.body.birthdate,
-                email: req.body.email,
-                city: req.body.city,
-                gender: req.body.gender,
-                profileImage: req.file.path,
-              });
-              try {
-                const a1 = await user.save();
-                res.json(a1);
-              } catch (err) {
-                res.send(err);
-              }
+            const alien = await Users.findOneAndUpdate(
+                {number:req.body.number},
+                {
+                    name: req.body.name,
+                    birthdate: req.body.birthdate,
+                    email: req.body.email,
+                    city: req.body.city,
+                    gender: req.body.gender,
+                    profileImage: req.file.path,
+                   
+                  }
+              );
+              res.json(alien);
         }else{
-            const user = new Users({
-                name: req.body.name,
-                birthdate: req.body.birthdate,
-                email: req.body.email,
-                city: req.body.city,
-                gender: req.body.gender,
-              });
-              try {
-                const a1 = await user.save();
-                res.json(a1);
-              } catch (err) {
-                res.send(err);
-              }
+            const alien = await Users.findOneAndUpdate(
+                {number:req.body.number},
+                {
+                    name: req.body.name,
+                    birthdate: req.body.birthdate,
+                    email: req.body.email,
+                    city: req.body.city,
+                    gender: req.body.gender,
+                   
+                  }
+              );
+              res.json(alien);
         }
     }else{
         res.json({
             status:false,
-            message:"Email already register"
+            message:"No such user "
         })
     }
-  try {
-    const alien = await Users.findOneAndUpdate(
-      { _id: req.params.id },
-      req.body
-    );
-
-    res.json(alien);
-  } catch (err) {
-    res.send("Error");
-  }
+ 
 });
 
 /////////////////////////////////////////////////////AUTH OTP////////
