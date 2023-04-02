@@ -8,7 +8,8 @@ const multer = require("multer");
 const doctorsData = require("../models/doctorsData");
 
 const accountSid = "AC247ceb11eeebf6b879ad820df6ed70ca";
-const authToken = "bf78e45d392683d9fdc2631c1038aade";
+const authToken = "f051c64c5d72febc23b8d8c9f5833632";
+const secondtoken="6b4afeeea6ceda1abb347a78e5d84067"
 const client = require("twilio")(accountSid, authToken);
 
 var storage = multer.diskStorage({
