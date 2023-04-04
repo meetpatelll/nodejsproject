@@ -3,17 +3,17 @@ const mongoose = require('mongoose')
 
 const otpDataSchema = new mongoose.Schema({
 
-    number: {
+    email: {
         type: String,
-        required: true
+        required: false
     },
     otp: {
         type: String,
-        required: true
+        required: false
     },
     time:{
         type:String,
-        required: true
+        required: false
 
     }
 

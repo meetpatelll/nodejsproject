@@ -6,6 +6,7 @@ const otpData = require("../models/otpData");
 const moment = require("moment/moment");
 const multer = require("multer");
 const doctorsData = require("../models/doctorsData");
+const sendMail = require("../Controller/Email");
 
 const accountSid = "AC247ceb11eeebf6b879ad820df6ed70ca";
 const authToken = "f051c64c5d72febc23b8d8c9f5833632";
@@ -155,29 +156,7 @@ router.post("/updateUser",upload, async (req, res) => {
 
 /////////////////////////////////////////////////////AUTH OTP////////
 
-router.post("/send", async (req, res) => {
-  const code = Math.floor(1000 + Math.random() * 9000);
-   const data= await otpData.findOneAndRemove({ number: req.body.number })
-
-  
-console.log("KKKKKKKKKKKKKKKKKKKKKKK",code)
-  const userOtp = new otpData({
-    number: req.body.number,
-    otp: code,
-    time: new moment(),
-  });
-  try {
-     let a1=await userOtp.save();
-    let  data=await client.messages.create({
-      body: `code is ${code}`,
-      from: "+15855316012",
-      to: `+${req.body.number}`,
-    });
-    res.json(data);
-  } catch (err) {
-    res.send(err);
-  }
-});
+router.post("/send", sendMail);
 
 router.post("/resend", async (req, res) => {
   const code = Math.floor(1000 + Math.random() * 9000);
@@ -200,20 +179,20 @@ router.post("/resend", async (req, res) => {
 router.post("/verifyOtp", async (req, res) => {
     
   try {
-    const number = await otpData.find({ number: req.body.number });
+    const number = await otpData.find({ email: req.body.email });
     console.log(number,"JJJJ")
     if (
       number[0].otp == req.body.otp &&
       moment().diff(moment(number[0]?.time), "minute") < 10
     ) {
-      await otpData.remove({ number: number[0].number });
+      await otpData.remove({ email: number[0].email });
       res.json({
         status:true,
         message:"OTP verify"
       });
     } else {
       res.json({
-        status:true,
+        status:false,
         message:"invaild otp"
       });
     }
