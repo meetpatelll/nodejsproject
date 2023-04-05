@@ -16,8 +16,8 @@ const sendMail = async (req, res) => {
     }
 });
 
-const code = Math.floor(1000 + Math.random() * 9000);
-const data= await otpData.findOneAndRemove({ email: req.body.email })
+const code = await  Math.floor(1000 + Math.random() * 9000);
+ await otpData.findOneAndRemove({ email: req.body.email })
 
   const userOtp = new otpData({
     email: req.body.email,

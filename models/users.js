@@ -29,7 +29,7 @@ const userRegistrationSchema = new mongoose.Schema({
     },
     number:{
         type:String,
-        required:true
+        required:false
     }
 
 })

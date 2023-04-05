@@ -46,15 +46,15 @@ router.get("/getUserList", async (req, res) => {
   }
 });
 
-router.post("/getUserByMobile", async (req, res) => {
+router.post("/getUserByEmail", async (req, res) => {
   try {
-    const user = await Users.find({number:req.body.number});
+    const user = await Users.find({email:req.body.email});
     if(user.length>0){
         res.json(user);
     }else{
 res.json({
     status:false,
-    message:"Can't find user with such mobile number"
+    message:"Can't find user with such email number"
 })
     }
     
@@ -66,7 +66,7 @@ res.json({
 
 
 router.post("/createUser",upload, async (req, res) => {
-let userInfo=await Users.find({ number:req.body.number})
+let userInfo=await Users.find({ email:req.body.email})
 if(userInfo.length<=0){
     if(req.file){    
         const user = new Users({
@@ -103,7 +103,7 @@ if(userInfo.length<=0){
 }else{
     res.json({
         status:false,
-        message:"Mobile already register"
+        message:"email already register"
     })
 }
 
@@ -112,14 +112,14 @@ if(userInfo.length<=0){
 
 router.post("/updateUser",upload, async (req, res) => {
 
-    let userInfo= await Users.find({number:req.body.number});
+    let userInfo= await Users.find({email:req.body.email});
     console.log(userInfo,"adbfisbdujsdbjsbjsfdbsjdlbsdjlbvf")
 
     if(!userInfo.length<=0){
         if(req.file){
         
             const alien = await Users.findOneAndUpdate(
-                {number:req.body.number},
+                {email:req.body.email},
                 {
                     name: req.body.name,
                     birthdate: req.body.birthdate,
@@ -133,7 +133,7 @@ router.post("/updateUser",upload, async (req, res) => {
               res.json(alien);
         }else{
             const alien = await Users.findOneAndUpdate(
-                {number:req.body.number},
+                {email:req.body.email},
                 {
                     name: req.body.name,
                     birthdate: req.body.birthdate,
@@ -158,23 +158,7 @@ router.post("/updateUser",upload, async (req, res) => {
 
 router.post("/send", sendMail);
 
-router.post("/resend", async (req, res) => {
-  const code = Math.floor(1000 + Math.random() * 9000);
-  try {
-    await otpData.findOneAndUpdate(
-      { number: req.body.number },
-      { otp: code, time: new moment() }
-    );
-    await client.messages.create({
-      body: `  code is ${code}`,
-      from: "+15855316012",
-      to: `+${req.body.number}`,
-    });
-    res.json("otp re-send");
-  } catch (err) {
-    res.send(err);
-  }
-});
+
 
 router.post("/verifyOtp", async (req, res) => {
     
