@@ -80,7 +80,9 @@ if(userInfo.length<=0){
           });
           try {
             const a1 = await user.save();
-            res.json(a1);
+            res.json({status:true,
+                message:"User created success",
+            data:a1});
           } catch (err) {
             res.send(err);
           }
@@ -95,7 +97,9 @@ if(userInfo.length<=0){
           });
           try {
             const a1 = await user.save();
-            res.json(a1);
+            res.json({status:true,
+            message:"User created success",
+        data:a1});
           } catch (err) {
             res.send(err);
           }
@@ -130,7 +134,16 @@ router.post("/updateUser",upload, async (req, res) => {
                    
                   }
               );
-              res.json(alien);
+              res.json({data:{status:true,
+                message:"User updated success",
+            data: {
+                name: req.body.name,
+                birthdate: req.body.birthdate,
+                email: req.body.email,
+                city: req.body.city,
+                gender: req.body.gender,
+               
+              }}});
         }else{
             const alien = await Users.findOneAndUpdate(
                 {email:req.body.email},
@@ -143,7 +156,16 @@ router.post("/updateUser",upload, async (req, res) => {
                    
                   }
               );
-              res.json(alien);
+              res.json({status:true,
+                message:"User updated success",
+            data: {
+                name: req.body.name,
+                birthdate: req.body.birthdate,
+                email: req.body.email,
+                city: req.body.city,
+                gender: req.body.gender,
+               
+              }});
         }
     }else{
         res.json({
